@@ -70,15 +70,7 @@ export interface StorageAdapter {
 }
 
 export interface StorageAdapterEx extends StorageAdapter {
-  defaultAdapter: string
-  adapters?: Map<string, StorageAdapter>
-
-  syncBlobFromStorage: (
-    ctx: MeasureContext,
-    workspaceId: WorkspaceId,
-    objectName: string,
-    provider?: string
-  ) => Promise<Blob>
+  adapters?: [string, StorageAdapter][]
 
   find: (ctx: MeasureContext, workspaceId: WorkspaceId) => StorageIterator
 }
@@ -187,7 +179,7 @@ export async function removeAllObjects (
       break
     }
     for (const obj of objs) {
-      bulk.push(obj.storageId)
+      bulk.push(obj._id)
       if (bulk.length > 50) {
         await storage.remove(ctx, workspaceId, bulk)
         bulk = []
